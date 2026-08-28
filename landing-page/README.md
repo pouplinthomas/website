@@ -41,6 +41,12 @@ Cherche `MARQUEE_ITEMS` et ajoute/retire une ligne du tableau (une chaîne de te
 
 C'est automatique **une fois la configuration ci-dessous faite** : il suffit de publier l'article dans Ghost avec le tag configuré (voir `ARTICLES_TAG_SLUG`). Pas besoin de revenir modifier ce fichier.
 
+### Ajouter un badge sur un article (ex. "New", "Selection Chiang Mai Design Week 2026")
+
+Ajoute au post, dans Ghost, un second tag interne au format `#badge:<texte du badge>` — par exemple `#badge:New`. Le badge apparaît automatiquement en haut à droite de la carte de cet article. Pas de tag `#badge:...` sur le post → pas de badge affiché. C'est le même principe que le tag de sélection (`#homepage-feature`) : un tag commençant par `#` est interne à Ghost, invisible pour les lecteurs, il ne sert qu'à piloter l'affichage de la homepage.
+
+Pour les 3 articles de secours (`ARTICLES_FALLBACK`, utilisés uniquement si l'API n'est pas configurée), il n'y a pas de tag à créer : remplis directement le champ `badge` de l'objet correspondant dans le fichier.
+
 ## Configuration à faire une seule fois (récupération auto des articles)
 
 Sans cette configuration, la page affiche 3 articles de secours codés en dur (`ARTICLES_FALLBACK`) pour ne jamais casser visuellement la page — mais ils ne se mettront jamais à jour tout seuls.

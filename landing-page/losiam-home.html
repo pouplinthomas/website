@@ -1100,6 +1100,15 @@
      la page affiche automatiquement les 3 articles de secours
      définis dans ARTICLES_FALLBACK plus bas, pour ne jamais
      casser la page.
+
+     AJOUTER UN BADGE (ex: "New", "Selection Chiang Mai Design
+     Week 2026") SUR UN ARTICLE VENANT DE GHOST :
+       Ajoute au post un second tag interne au format
+       "#badge:<texte du badge>" (ex: "#badge:New"). Le badge
+       apparaît automatiquement sur la carte de cet article.
+       Pas de tag "#badge:..." → pas de badge affiché.
+       (Pour les articles de secours ARTICLES_FALLBACK, il suffit
+       de remplir directement le champ "badge" de l'objet.)
   ------------------------------------------------------- */
   const GHOST_API_URL = ''; // ex: 'https://www.losiam.com'
   const GHOST_CONTENT_API_KEY = ''; // ex: '1234567890abcdef1234567890'
@@ -1213,6 +1222,29 @@
     }
   }
 
+  /* Badge d'un article venant de Ghost : on lit un tag interne
+     nommé "#badge:<texte du badge>" sur le post (ex: "#badge:New",
+     "#badge:Selection Chiang Mai Design Week 2026"). Un tag
+     commençant par # est un tag interne Ghost — invisible pour les
+     lecteurs, uniquement là pour piloter l'affichage. S'il n'y a
+     pas de tag "#badge:...", aucun badge n'est affiché. */
+  function extractBadgeFromTags(tags) {
+    if (!tags || !tags.length) return '';
+    const badgeTag = tags.find(function (t) {
+      return /^#badge:/i.test(t.name || '');
+    });
+    return badgeTag ? badgeTag.name.replace(/^#badge:\s*/i, '').trim() : '';
+  }
+
+  /* Légende de catégorie (ex: "Material") : on prend le premier tag
+     public du post, en ignorant les tags internes comme #badge:...
+     ou le tag de sélection ARTICLES_TAG_SLUG lui-même. */
+  function firstPublicTagName(tags) {
+    if (!tags || !tags.length) return 'Journal';
+    const publicTag = tags.find(function (t) { return t.visibility === 'public'; });
+    return publicTag ? publicTag.name : 'Journal';
+  }
+
   function loadArticlesFromGhost() {
     if (!GHOST_API_URL || !GHOST_CONTENT_API_KEY) {
       renderArticles(ARTICLES_FALLBACK);
@@ -1242,10 +1274,10 @@
           posts.map(function (post) {
             return {
               url: post.url,
-              badge: '',
+              badge: extractBadgeFromTags(post.tags),
               img: post.feature_image || ARTICLES_FALLBACK[0].img,
               alt: post.title,
-              tag: (post.tags && post.tags[0] && post.tags[0].name) || 'Journal',
+              tag: firstPublicTagName(post.tags),
               date: formatGhostDate(post.published_at),
               title: post.title,
               excerpt: post.excerpt,
