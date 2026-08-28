@@ -1,0 +1,1266 @@
+<div class="gh-full-width-breakout">
+<style>
+    /* Le thème Ghost définit body { font-size: 62.5% } ce qui réduit la base rem à 10px.
+       On remet 16px sur html pour que tous les rem du contenu LOSIAM soient corrects. */
+    html { font-size: 16px !important; }
+
+    .gh-full-width-breakout {
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: calc(50% - 50vw) !important;
+        width: 100vw !important;
+        position: relative;
+        left: 0;
+        right: 0;
+    }
+    .gh-article-header,
+    .gh-article-title,
+    .article-title,
+    .post-title {
+        display: none !important;
+    }
+    .gh-article-header,
+    .gh-canvas-header,
+    .article-header {
+        display: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .gh-content {
+        margin-top: 0 !important;
+    }
+
+    /* Reset liens Ghost — neutralise le rouge et le soulignement */
+    .losiam-home a,
+    .losiam-home a:link,
+    .losiam-home a:visited,
+    .losiam-home a:hover,
+    .losiam-home a:active {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Boutons hero ambré */
+    .losiam-home .ls-hero-btn-primary,
+    .losiam-home .ls-hero-btn-primary:link,
+    .losiam-home .ls-hero-btn-primary:visited {
+        color: #1a1a18 !important;
+    }
+    .losiam-home .ls-hero-btn-primary:hover { color: #1a1a18 !important; }
+
+    /* Bouton See the full catalogue */
+    .losiam-home .ls-btn--primary,
+    .losiam-home .ls-btn--primary:link,
+    .losiam-home .ls-btn--primary:visited {
+        color: #fffffe !important;
+    }
+
+    /* Service links (VIEW CATALOGUE etc) */
+    .losiam-home .ls-service__link,
+    .losiam-home .ls-service__link:link,
+    .losiam-home .ls-service__link:visited {
+        color: var(--ls-leaf) !important;
+        border-bottom: 1px solid var(--ls-leaf) !important;
+    }
+
+    /* Textes blancs sur fonds sombres */
+    .losiam-home .ls-story__content *,
+    .losiam-home .ls-contact__content *,
+    .losiam-home .ls-section--dark * {
+        color: inherit !important;
+    }
+
+    /* Articles blog */
+    .losiam-home .ls-article__title { color: var(--ls-ink) !important; }
+    .losiam-home .ls-article__excerpt { color: var(--ls-ink) !important; }
+</style>
+<!-- =========================================================
+     LOSIAM.COM — HOMEPAGE (v3 · data-driven · English)
+
+     CE QUI A CHANGÉ PAR RAPPORT À LA v2 :
+       - Les produits phares et les items du bandeau défilant
+         (marquee) sont maintenant définis dans un tableau JS
+         (voir "CONTENU À METTRE À JOUR" tout en bas du fichier),
+         plus besoin de copier/coller du HTML pour en ajouter un.
+       - Les 3 derniers articles de blog sont récupérés
+         automatiquement depuis Ghost via la Content API — plus
+         JAMAIS besoin de modifier ce fichier quand tu publies un
+         article. Il suffit de lui mettre le bon tag (voir config
+         ARTICLES_TAG plus bas). Un tableau de secours (fallback)
+         s'affiche uniquement si l'API est mal configurée ou
+         injoignable.
+       - Suppression d'environ 150 lignes de CSS mort (un premier
+         bloc ".ls-hero" qui n'était plus utilisé par aucune balise
+         du fichier).
+
+     GUIDE D'UTILISATION COMPLET : voir landing-page/README.md
+     dans le dépôt.
+
+     HOW TO USE IN GHOST:
+       Option A — Quick test:
+         Create a page in Ghost, add an HTML card (+ > HTML),
+         paste EVERYTHING below (from <style> to closing </div>).
+         Then set this page as home in routes.yaml or Design settings.
+
+       Option B — Proper integration:
+         Create home.hbs in your theme, add {{!< default}} at the top,
+         paste the content below, upload theme, re-activate.
+         (Voir README.md pour la version "home.hbs" recommandée à
+         terme, qui rend ce fichier inutile.)
+     ========================================================= -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter+Tight:wght@300;400;500;600&display=swap');
+
+  .losiam-home *,
+  .losiam-home *::before,
+  .losiam-home *::after { box-sizing: border-box; }
+
+  .losiam-home {
+    /* Botanical & sensorial palette — brand green: #455437 */
+    --ls-ink: #202a1a;        /* deepest green, used for H2 text & dark bg */
+    --ls-leaf: #455437;       /* LOSIAM brand green */
+    --ls-moss: #6b7a5b;       /* lighter green, for eyebrows & accents */
+    --ls-sand: #e8dfd2;
+    --ls-cream: #f5f0e6;
+    --ls-paper: #faf7f1;
+    --ls-amber: #b8884a;
+    --ls-rust: #8a4a2b;
+
+    --ls-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --ls-body: 'Inter Tight', 'Work Sans', -apple-system, sans-serif;
+
+    font-family: var(--ls-body);
+    color: var(--ls-ink);
+    background: var(--ls-paper);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .losiam-home h1, .losiam-home h2, .losiam-home h3 {
+    font-family: var(--ls-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .losiam-home .ls-eyebrow {
+    font-family: var(--ls-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ls-moss);
+  }
+
+  .losiam-home .ls-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ---------- SHARED BUTTONS ---------- */
+  .ls-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.95rem 1.8rem;
+    font-family: var(--ls-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+  .ls-btn--primary {
+    background: var(--ls-ink);
+    color: var(--ls-paper);
+  }
+  .ls-btn--primary:hover {
+    background: var(--ls-leaf);
+    transform: translateY(-2px);
+  }
+  .ls-btn__arrow { transition: transform 0.3s ease; }
+  .ls-btn:hover .ls-btn__arrow { transform: translateX(4px); }
+
+  /* ---------- MARQUEE ---------- */
+  .ls-marquee {
+    background: var(--ls-ink);
+    color: var(--ls-cream);
+    padding: 1.5rem 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(245,240,230,0.1);
+    border-bottom: 1px solid rgba(245,240,230,0.1);
+  }
+  .ls-marquee__track {
+    display: flex;
+    gap: 3rem;
+    animation: ls-scroll 45s linear infinite;
+    white-space: nowrap;
+    font-family: var(--ls-display);
+    font-size: 1.6rem;
+    font-style: italic;
+    font-weight: 300;
+    width: max-content;
+  }
+  .ls-marquee__item { display: inline-flex; align-items: center; gap: 3rem; }
+  .ls-marquee__item::after {
+    content: '❋';
+    color: var(--ls-amber);
+    font-style: normal;
+  }
+  @keyframes ls-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ---------- COMMON SECTION ---------- */
+  .ls-section { padding: 7rem 0; position: relative; }
+  .ls-section__head {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 4rem;
+  }
+  .ls-section__title { font-size: clamp(2rem, 4vw, 3.5rem); }
+  .ls-section__title em { font-style: italic; color: var(--ls-leaf); }
+  .ls-section__intro {
+    font-size: 1.05rem;
+    color: var(--ls-ink);
+    opacity: 0.75;
+    max-width: 58ch;
+  }
+
+  /* ---------- SERVICES (3 offers) ---------- */
+  .ls-services { background: var(--ls-cream); }
+  .ls-services__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid rgba(31,42,36,0.15);
+  }
+  .ls-service {
+    padding: 3rem 2rem;
+    border-right: 1px solid rgba(31,42,36,0.15);
+    border-bottom: 1px solid rgba(31,42,36,0.15);
+    position: relative;
+    transition: background 0.4s ease;
+  }
+  .ls-service:last-child { border-right: none; }
+  .ls-service:hover { background: rgba(184,136,74,0.06); }
+  .ls-service__num {
+    font-family: var(--ls-display);
+    font-style: italic;
+    font-size: 3rem;
+    color: var(--ls-amber);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  .ls-service h3 {
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+    color: var(--ls-ink);
+  }
+  .ls-service p {
+    font-size: 0.95rem;
+    color: var(--ls-ink);
+    opacity: 0.75;
+    margin: 0 0 1.5rem;
+  }
+  .ls-service__link {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ls-leaf);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid var(--ls-leaf);
+    padding-bottom: 2px;
+  }
+  .ls-service__link:hover { color: var(--ls-amber); border-color: var(--ls-amber); }
+
+  /* ---------- SIGNATURE PRODUCTS ---------- */
+  .ls-catalog__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .ls-product {
+    background: var(--ls-cream);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+  }
+  .ls-product:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px -20px rgba(31,42,36,0.15);
+  }
+  .ls-product__visual {
+    aspect-ratio: 4/5;
+    background: var(--ls-sand);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ls-product__visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .ls-product:hover .ls-product__visual img { transform: scale(1.04); }
+  .ls-product__tag {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--ls-ink);
+    color: var(--ls-cream);
+    padding: 0.4rem 0.7rem;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .ls-product__body { padding: 1.5rem 1.75rem 2rem; }
+  .ls-product__category {
+    font-family: var(--ls-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ls-moss);
+    margin-bottom: 0.5rem;
+  }
+  .ls-product__name {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .ls-product__desc {
+    font-size: 0.9rem;
+    color: var(--ls-ink);
+    opacity: 0.7;
+    margin: 0 0 1rem;
+  }
+  .ls-product__notes {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ls-amber);
+    font-style: italic;
+    font-family: var(--ls-display);
+  }
+  .ls-catalog__cta {
+    text-align: center;
+    margin-top: 3.5rem;
+  }
+
+  /* ---------- EXTRACTION PROCESS ---------- */
+  .ls-process { background: var(--ls-cream); }
+  .ls-process__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+  .ls-process__item { text-align: left; }
+  .ls-process__icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 1.5rem;
+    color: var(--ls-leaf);
+  }
+  .ls-process__item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .ls-process__item p {
+    font-size: 0.95rem;
+    color: var(--ls-ink);
+    opacity: 0.75;
+    margin: 0;
+  }
+
+  /* ---------- STORY / ABOUT ---------- */
+  .ls-story {
+    background: var(--ls-ink);
+    color: var(--ls-cream);
+    position: relative;
+    overflow: hidden;
+  }
+  .ls-story::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(184,136,74,0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .ls-story__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    position: relative;
+  }
+  .ls-story h2 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    margin-bottom: 2rem;
+  }
+  .ls-story h2 em { color: var(--ls-amber); font-style: italic; }
+  .ls-story p {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    margin-bottom: 1.5rem;
+  }
+  .ls-story__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(245,240,230,0.2);
+  }
+  .ls-story__stat-num {
+    font-family: var(--ls-display);
+    font-style: italic;
+    font-size: 2.5rem;
+    color: var(--ls-amber);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .ls-story__stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .ls-story__visual {
+    aspect-ratio: 4/5;
+    background: linear-gradient(135deg, var(--ls-leaf), var(--ls-moss));
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- BLOG ---------- */
+  .ls-blog__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .ls-article,
+  .ls-article:link,
+  .ls-article:visited,
+  .ls-article:hover,
+  .ls-article:active {
+    cursor: pointer;
+    display: block;
+    text-decoration: none !important;
+    color: var(--ls-ink) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  .ls-article *,
+  .ls-article h3,
+  .ls-article p,
+  .ls-article span,
+  .ls-article div {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  .ls-article .ls-article__title {
+    color: var(--ls-ink) !important;
+  }
+  .ls-article .ls-article__excerpt {
+    color: var(--ls-ink) !important;
+    opacity: 0.65;
+  }
+  .ls-article .ls-article__meta span {
+    color: var(--ls-moss) !important;
+  }
+  .ls-article:hover .ls-article__title {
+    color: var(--ls-leaf) !important;
+  }
+  .ls-article__visual {
+    aspect-ratio: 3/2;
+    background: var(--ls-sand);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    border-radius: 2px;
+  }
+  .ls-article__visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .ls-article:hover .ls-article__visual img { transform: scale(1.04); }
+  .ls-article__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--ls-ink);
+    color: var(--ls-cream);
+    padding: 0.4rem 0.7rem;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .ls-article__meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ls-moss);
+    margin-bottom: 0.75rem;
+  }
+  .ls-article__title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+    line-height: 1.25;
+  }
+  .ls-article__excerpt {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  /* ---------- CTA / CONTACT ---------- */
+  .ls-contact {
+    background:
+      linear-gradient(rgba(61,90,69,0.92), rgba(31,42,36,0.96)),
+      radial-gradient(circle at 30% 40%, var(--ls-moss), var(--ls-leaf));
+    color: var(--ls-cream);
+    padding: 8rem 0;
+    position: relative;
+  }
+  .ls-contact__inner {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ls-contact h2 {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    margin-bottom: 1.5rem;
+  }
+  .ls-contact h2 em { color: var(--ls-amber); font-style: italic; }
+  .ls-contact p {
+    font-size: 1.1rem;
+    opacity: 0.85;
+    margin-bottom: 3rem;
+    max-width: 58ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ls-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+  .ls-form__field { display: flex; flex-direction: column; }
+  .ls-form__field--full { grid-column: 1 / -1; }
+  .ls-form__label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+  .ls-form__input,
+  .ls-form__textarea,
+  .ls-form__select {
+    padding: 0.9rem 1rem;
+    background: rgba(245,240,230,0.08);
+    border: 1px solid rgba(245,240,230,0.25);
+    color: var(--ls-cream);
+    font-family: var(--ls-body);
+    font-size: 0.95rem;
+    border-radius: 2px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .ls-form__input:focus,
+  .ls-form__textarea:focus,
+  .ls-form__select:focus {
+    outline: none;
+    border-color: var(--ls-amber);
+    background: rgba(245,240,230,0.12);
+  }
+  .ls-form__textarea { min-height: 120px; resize: vertical; }
+  .ls-form__select option { background: var(--ls-ink); color: var(--ls-cream); }
+  .ls-form__submit {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    background: var(--ls-amber);
+    color: var(--ls-ink);
+  }
+  .ls-form__submit:hover { background: var(--ls-cream); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .ls-section__head { grid-template-columns: 1fr; gap: 1.5rem; }
+    .ls-services__grid,
+    .ls-catalog__grid,
+    .ls-process__grid,
+    .ls-blog__grid { grid-template-columns: 1fr; }
+    .ls-service { border-right: none; }
+    .ls-story__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .ls-story__stats { grid-template-columns: 1fr 1fr; }
+    .ls-form { grid-template-columns: 1fr; }
+    .ls-section { padding: 4.5rem 0; }
+    .ls-container { padding: 0 1.25rem; }
+  }
+</style>
+
+<div class="losiam-home">
+
+  <!-- ============= HERO — PLEINE LARGEUR ============= -->
+  <!--
+    PHOTO DU HERO :
+    L'image de fond est chargée directement en <img> ci-dessous.
+
+    Pour remplacer par ta photo une fois uploadée dans Ghost :
+    1. Va dans Ghost admin > crée un post brouillon
+    2. Glisse-dépose ta photo dans l'éditeur
+    3. Clique sur la photo > bouton "Copy image URL"
+    4. Reviens ici, remplace la valeur du "src" de l'<img> ci-dessous
+    5. Supprime le post brouillon (la photo reste hébergée sur Ghost)
+
+    Conseils pour la photo :
+    - Format paysage, haute résolution (min 2000px de large)
+    - Tons sombres ou moyens pour que le texte clair reste lisible
+    - Point d'intérêt à droite ou au centre (le texte est à gauche)
+  -->
+  <section style="
+    min-height: 100vh;
+    background: #344028;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 40px 0;
+  ">
+    <!-- Photo de fond — Magnolia wild (About us page) -->
+    <img
+      src="https://www.losiam.com/content/images/size/w1200/2025/02/Magnolia-wild-1.jpg"
+      alt=""
+      aria-hidden="true"
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none">
+    <!-- Overlay sombre pour lisibilité du texte -->
+    <div style="position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(32,42,26,0.55) 0%,rgba(32,42,26,0.72) 50%,rgba(32,42,26,0.88) 100%)"></div>
+
+    <!-- Grain texture -->
+    <div style="position:absolute;inset:0;background-image:url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27noise%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23noise)%27 opacity=%271%27/%3E%3C/svg%3E');opacity:0.04;pointer-events:none;z-index:2"></div>
+
+    <!-- Hero content -->
+    <div style="position:relative;z-index:3;max-width:900px;padding-bottom:80px;animation:lsHeroIn 1s ease forwards">
+
+      <style>
+        @keyframes lsHeroIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes lsEyebrowIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .ls-hero-eyebrow { font-family: var(--ls-body); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #c9a97a; font-weight: 400; margin-bottom: 32px; display: block; opacity: 0; animation: lsEyebrowIn 0.8s ease 0.15s forwards; }
+        .ls-hero-h1 { font-family: var(--ls-display); font-size: clamp(80px, 6.5vw, 100px); font-weight: 300; line-height: 1.05; color: #fffffe; margin: 0 0 32px; opacity: 0; animation: lsHeroIn 0.9s ease 0.35s forwards; }
+        .ls-hero-h1 em { font-style: italic; color: #c9a97a; }
+        .ls-hero-divider { width: 56px; height: 1px; background: #b08d57; margin: 0 auto 32px; opacity: 0; animation: lsEyebrowIn 0.7s ease 0.55s forwards; }
+        .ls-hero-sub { font-size: 18px; color: rgba(255,255,255,0.7); line-height: 1.8; max-width: 600px; margin: 0 auto 52px; font-weight: 300; opacity: 0; animation: lsHeroIn 0.8s ease 0.65s forwards; }
+        .ls-hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: lsHeroIn 0.8s ease 0.85s forwards; }
+        .ls-hero-btn-primary { display: inline-block; padding: 17px 42px; background: #b08d57; color: #1a1a18; font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; transition: background 0.25s; font-family: var(--ls-body); }
+        .ls-hero-btn-primary:hover { background: #c9a97a; color: #1a1a18; }
+        .ls-hero-btn-outline { display: inline-block; padding: 16px 42px; border: 1px solid rgba(255,255,255,0.6); color: #ffffff; font-size: 13px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; background: transparent; transition: all 0.25s; font-family: var(--ls-body); }
+        .ls-hero-btn-outline:hover { border-color: #fffffe; background: rgba(255,255,255,0.1); color: #ffffff; }
+        .ls-hero-trust { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; border-top: 0.5px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; padding: 14px 40px; gap: 0; flex-wrap: wrap; opacity: 0; animation: lsEyebrowIn 0.8s ease 1.05s forwards; }
+        .ls-hero-trust-item { font-family: var(--ls-body); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); padding: 5px 24px; border-right: 0.5px solid rgba(255,255,255,0.1); white-space: nowrap; }
+        .ls-hero-trust-item:last-child { border-right: none; }
+        .ls-hero-trust-item span { color: #b08d57; margin-right: 5px; }
+        @media(max-width:600px) {
+          .ls-hero-h1 { font-size: clamp(42px,10vw,64px); }
+          .ls-hero-sub { font-size: 16px; }
+          .ls-hero-actions { flex-direction: column; align-items: center; }
+          .ls-hero-trust { display: none; }
+          .ls-hero-btn-primary, .ls-hero-btn-outline { width: 100%; max-width: 280px; text-align: center; }
+        }
+      </style>
+
+      <span class="ls-hero-eyebrow">Chiang Mai, Northern Thailand · Est. 2022</span>
+      <h1 class="ls-hero-h1">
+        Rare Thai botanicals,<br>
+        <em>captured in premium</em><br>
+        natural absolutes
+      </h1>
+      <div class="ls-hero-divider"></div>
+      <p class="ls-hero-sub">
+        Artisanal CO2 &amp; solvent extraction laboratory. IFRA certified extracts ethically sourced from local Thai farmers, delivered to perfumers and fragrance houses worldwide.
+      </p>
+      <div class="ls-hero-actions">
+        <a href="#products" class="ls-hero-btn-primary">View our products</a>
+        <a href="https://www.losiam.com/content/files/2026/07/Losiam-Catalogue-Juillet-2026--07-.pdf" class="ls-hero-btn-primary" target="_blank">Download catalogue</a>
+      </div>
+    </div>
+
+    <!-- Trust bar -->
+    <div class="ls-hero-trust">
+      <div class="ls-hero-trust-item"><span>✦</span>IFRA Certified</div>
+      <div class="ls-hero-trust-item"><span>✦</span>CO2 &amp; Solvent Extraction</div>
+      <div class="ls-hero-trust-item"><span>✦</span>Nagoya and UEBT Compliant</div>
+      <div class="ls-hero-trust-item"><span>✦</span>Chiang Mai Design week: Make scents, make sense</div>
+      <div class="ls-hero-trust-item"><span>✦</span>CMU Biopolis · Chiang Mai</div>
+    </div>
+
+  </section>
+
+  <!-- ============= MARQUEE — généré depuis MARQUEE_ITEMS (voir bas de page) ============= -->
+  <div class="ls-marquee" aria-hidden="true">
+    <div class="ls-marquee__track" id="ls-marquee-track"></div>
+  </div>
+
+  <!-- ============= SERVICES (3 offers from real site) ============= -->
+  <section class="ls-section ls-services">
+    <div class="ls-container">
+      <div class="ls-section__head">
+        <div>
+          <span class="ls-eyebrow">What we offer</span>
+          <h2 class="ls-section__title">Three ways<br><em>to work with us</em></h2>
+        </div>
+        <p class="ls-section__intro">
+          From ready-to-order classics to fully bespoke extractions, our laboratory adapts
+          to the reality of your formulation work — whether you need a reliable supply
+          or a molecule that doesn't exist yet.
+        </p>
+      </div>
+
+      <div class="ls-services__grid">
+        <div class="ls-service">
+          <div class="ls-service__num">01</div>
+          <h3>Classic Products</h3>
+          <p>Signature absolutes and concretes available year-round, produced at scale with consistent quality. Samples dispatched within 48 hours.</p>
+          <a href="https://www.losiam.com/our-products/" class="ls-service__link">View catalogue →</a>
+        </div>
+        <div class="ls-service">
+          <div class="ls-service__num">02</div>
+          <h3>Contract Extraction</h3>
+          <p>Exclusive, made-to-order production for materials that have completed the R&amp;D phase. Ideal for brands securing a unique supply.</p>
+          <a href="https://www.losiam.com/our-custom-extraction-projects/" class="ls-service__link">Learn more →</a>
+        </div>
+        <div class="ls-service">
+          <div class="ls-service__num">03</div>
+          <h3>R&amp;D Partnership</h3>
+          <p>Co-develop unique extracts with our team. From never-before-extracted species to upcycled byproducts — we build the material with you.</p>
+          <a href="https://www.losiam.com/our-custom-extraction-projects/" class="ls-service__link">Start a project →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SIGNATURE PRODUCTS — généré depuis PRODUCTS (voir bas de page) ============= -->
+  <section class="ls-section" id="products">
+    <div class="ls-container">
+      <div class="ls-section__head">
+        <div>
+          <span class="ls-eyebrow">Signature absolutes</span>
+          <h2 class="ls-section__title">Rarities from<br><em>Northern Thailand</em></h2>
+        </div>
+        <p class="ls-section__intro">
+          A selection of our most distinctive materials — some extracted for the first time
+          in perfumery, all traceable from the harvest field to your bench.
+        </p>
+      </div>
+
+      <div class="ls-catalog__grid" id="ls-products-grid">
+        <!-- rempli par renderProducts() -->
+      </div>
+
+      <div class="ls-catalog__cta">
+        <a href="https://www.losiam.com/our-products/" class="ls-btn ls-btn--primary">
+          See the full catalogue <span class="ls-btn__arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= EXTRACTION PROCESS ============= -->
+  <section class="ls-section ls-process">
+    <div class="ls-container">
+      <div class="ls-section__head">
+        <div>
+          <span class="ls-eyebrow">Our methods</span>
+          <h2 class="ls-section__title">Green chemistry,<br><em>ancestral patience.</em></h2>
+        </div>
+        <p class="ls-section__intro">
+          We combine French fragrance heritage with cutting-edge green chemistry to
+          extract delicate aromatic profiles — without compromising the molecule or
+          the land it came from.
+        </p>
+      </div>
+
+      <div class="ls-process__grid">
+        <div class="ls-process__item">
+          <svg class="ls-process__icon" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M28 14 L28 42 M14 28 L42 28" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="28" cy="28" r="6" fill="currentColor"/>
+          </svg>
+          <h3>Solvent extraction</h3>
+          <p>Low-temperature solvent extraction preserves the delicate volatile profile of fresh flowers and leaves, capturing molecules that steam distillation would destroy.</p>
+        </div>
+        <div class="ls-process__item">
+          <svg class="ls-process__icon" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <path d="M18 8 L38 8 L38 20 Q38 28 28 28 Q18 28 18 20 Z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M22 28 L22 48 L34 48 L34 28" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="28" cy="38" r="3" fill="currentColor"/>
+          </svg>
+          <h3>Advanced technology: Solventless and CO₂</h3>
+          <p>Tincture, Ultrasonic assisted and Supercritical CO₂ extraction for the purest, solvent-free absolutes. Ideal for sensitive materials and brands seeking the cleanest possible label.</p>
+        </div>
+        <div class="ls-process__item">
+          <svg class="ls-process__icon" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <path d="M10 46 Q28 20 46 46" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <circle cx="18" cy="38" r="3" fill="currentColor"/>
+            <circle cx="28" cy="30" r="3" fill="currentColor"/>
+            <circle cx="38" cy="38" r="3" fill="currentColor"/>
+            <path d="M28 30 L28 10" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="28" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <h3>Upcycling R&amp;D</h3>
+          <p>We turn byproducts, cocoa husks, makiang pulp or mandarin peels into traceable, zero-waste absolutes. Luxury grade, vegan, with radically reduced environmental impact.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= STORY / ABOUT ============= -->
+  <section class="ls-section ls-story">
+    <div class="ls-container">
+      <div class="ls-story__grid">
+        <div class="ls-story__text">
+          <span class="ls-eyebrow" style="color: var(--ls-amber);">Who we are</span>
+          <h2 style="margin-top: 1rem; color: #fffffe !important;">A French laboratory<br><em>rooted in Chiang Mai.</em></h2>
+          <p>
+            Founded in 2022 and based at the Chiang Mai University Science &amp; Technology Park,
+            LOSiam bridges two decades of French expertise in natural extraction with exclusively the
+            extraordinary biodiversity of Northern Thailand.
+          </p>
+          <p>
+            We source directly from Thai farmers, often within hours of harvest, and work
+            closely with academic partners to introduce species never before extracted for
+            the fragrance industry. Every batch is traced from field to flask, Nagoya-compliant,
+            and IFRA-certified.
+          </p>
+
+          <div class="ls-story__stats">
+            <div>
+              <div class="ls-story__stat-num">2022</div>
+              <div class="ls-story__stat-label">Founded</div>
+            </div>
+            <div>
+              <div class="ls-story__stat-num">20+</div>
+              <div class="ls-story__stat-label">Years of heritage</div>
+            </div>
+            <div>
+              <div class="ls-story__stat-num">IFRA</div>
+              <div class="ls-story__stat-label">Certified</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ls-story__visual" style="padding:0;overflow:hidden;border-radius:2px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;min-height:480px">
+          <img src="https://www.losiam.com/content/images/size/w1200/2025/02/20241010_102035.jpg"
+               alt="LOSIAM laboratory"
+               style="width:100%;height:100%;object-fit:cover;grid-column:span 2">
+          <img src="https://www.losiam.com/content/images/size/w720/2025/02/20241211_091143.jpg"
+               alt="CO2 extraction equipment"
+               style="width:100%;height:100%;object-fit:cover">
+          <img src="https://www.losiam.com/content/images/size/w720/2025/02/20250211_103323.jpg"
+               alt="Natural absolutes"
+               style="width:100%;height:100%;object-fit:cover">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= BLOG / LATEST — généré depuis Ghost Content API (voir config en bas de page) ============= -->
+  <section class="ls-section">
+    <div class="ls-container">
+      <div class="ls-section__head">
+        <div>
+          <span class="ls-eyebrow">Latest</span>
+          <h2 class="ls-section__title">From the<br><em>laboratory journal</em></h2>
+        </div>
+        <p class="ls-section__intro">
+          Field notes, material spotlights, and industry dispatches — written by our
+          perfumers, flavorists and research team.
+        </p>
+      </div>
+
+      <div class="ls-blog__grid" id="ls-blog-grid">
+        <!-- rempli par renderArticles(), automatiquement depuis Ghost -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= CONTACT / CTA ============= -->
+  <section class="ls-contact" id="contact">
+    <div class="ls-container">
+      <div class="ls-contact__inner">
+        <span class="ls-eyebrow" style="color: var(--ls-amber);">Let's work together</span>
+        <h2 style="margin-top: 1rem; color: #fffffe !important;">Request samples<br><em>or start a project.</em></h2>
+        <p>
+          Tell us what you're looking for — a specific absolute, a custom extraction,
+          or an R&amp;D collaboration. Our team replies within two business days and dispatches
+          samples worldwide.
+        </p>
+        <form id="ls-contact-form" class="ls-form" action="https://formspree.io/f/mzepyove" method="POST">
+          <div class="ls-form__field">
+            <label class="ls-form__label" for="ls-name">Full name</label>
+            <input type="text" id="ls-name" name="name" class="ls-form__input" required>
+          </div>
+          <div class="ls-form__field">
+            <label class="ls-form__label" for="ls-company">Company</label>
+            <input type="text" id="ls-company" name="company" class="ls-form__input">
+          </div>
+          <div class="ls-form__field">
+            <label class="ls-form__label" for="ls-email">Email</label>
+            <input type="email" id="ls-email" name="email" class="ls-form__input" required>
+          </div>
+          <div class="ls-form__field">
+            <label class="ls-form__label" for="ls-interest">Interest</label>
+            <select id="ls-interest" name="interest" class="ls-form__select">
+              <option>Classic products / samples</option>
+              <option>Contract extraction</option>
+              <option>R&amp;D partnership</option>
+              <option>Press / media</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="ls-form__field ls-form__field--full">
+            <label class="ls-form__label" for="ls-msg">Your project</label>
+            <textarea id="ls-msg" name="message" class="ls-form__textarea" placeholder="Materials of interest, estimated volumes, timeline…"></textarea>
+          </div>
+          <button type="submit" class="ls-btn ls-form__submit" id="ls-form-submit-btn">
+            Send request <span class="ls-btn__arrow">→</span>
+          </button>
+          <p id="ls-form-status" style="grid-column: 1 / -1; margin-top: 1rem; font-size: 0.9rem;"></p>
+        </form>
+
+        <script>
+        (function() {
+          const form = document.getElementById('ls-contact-form');
+          const status = document.getElementById('ls-form-status');
+          const btn = document.getElementById('ls-form-submit-btn');
+
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            status.textContent = 'Sending…';
+            status.style.color = 'rgba(245,240,230,0.8)';
+
+            fetch(form.action, {
+              method: 'POST',
+              body: new FormData(form),
+              headers: { 'Accept': 'application/json' }
+            })
+            .then(function(response) {
+              if (response.ok) {
+                status.textContent = "Thank you — your message has been sent. We'll reply within two business days.";
+                status.style.color = '#c9a97a';
+                form.reset();
+              } else {
+                status.textContent = "Something went wrong. Please email us directly at info@losiam.com.";
+                status.style.color = '#e08a6a';
+              }
+            })
+            .catch(function() {
+              status.textContent = "Something went wrong. Please email us directly at info@losiam.com.";
+              status.style.color = '#e08a6a';
+            })
+            .finally(function() {
+              btn.disabled = false;
+              btn.style.opacity = '1';
+            });
+          });
+        })();
+        </script>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<!-- =========================================================
+     CONTENU À METTRE À JOUR
+     ========================================================= -->
+<script>
+(function () {
+
+  /* -------------------------------------------------------
+     1) BANDEAU DÉFILANT (marquee)
+     Pour ajouter / retirer un botanical, modifie juste ce
+     tableau — rien d'autre à toucher.
+  ------------------------------------------------------- */
+  const MARQUEE_ITEMS = [
+    'Saraphi Flowers',
+    'Fresh Pandan leaves',
+    'Flue-cured Thai Tobacco',
+    'Jungle Pepper (Fresh & Dry)',
+    'Lotus Flowers',
+    'Thai Ya Dong',
+    'Upcycled Mandarin peels',
+    'Upcycled Makiang pulp',
+  ];
+
+  /* -------------------------------------------------------
+     2) PRODUITS PHARES
+     Pour ajouter/modifier un produit : ajoute ou édite un
+     objet dans ce tableau. Champs :
+       tag      : badge affiché en haut à droite de l'image
+                  (facultatif — laisse '' pour ne rien afficher)
+       category : petite légende au-dessus du nom
+       name     : nom du produit
+       img      : URL de l'image (voir instructions "PHOTO DU
+                  HERO" plus haut pour récupérer une URL Ghost)
+       alt      : texte alternatif de l'image (accessibilité + SEO)
+       desc     : description courte (1-2 phrases)
+       notes    : notes olfactives, séparées par " · "
+  ------------------------------------------------------- */
+  const PRODUCTS = [
+    {
+      tag: 'Ultra-rare',
+      category: 'Fresh Flowers Absolute',
+      name: 'Saraphi',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/03/20250306_083403-1.jpg',
+      alt: 'Saraphi absolute — Mammea siamensis',
+      desc: 'Ethereal floral from Mammea siamensis — ethically harvested from 96 mapped trees on the CMU campus. No commercial farm exists.',
+      notes: 'Floral · Delicate · Songkran heritage',
+    },
+    {
+      tag: 'New 2026',
+      category: 'Fresh Leaf Absolute',
+      name: 'Fresh Pandan',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/01/pandan_leaf_1662708889_ba953198_progressive.jpg',
+      alt: 'Fresh Pandan Leaf Absolute — Pandanus amaryllifolius',
+      desc: 'Low-temperature solvent extraction locks in 2AP — basmati rice magic, creamy green freshness, cooling leafy depth.',
+      notes: 'Green · Gourmand · Creamy',
+    },
+    {
+      tag: 'Upcycled',
+      category: 'Wood Absolute',
+      name: 'Old Teak Sawdust',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/06/20260605_133856-4.jpg',
+      alt: 'Old Teak Sawdust Absolute — Tectona grandis',
+      desc: "A sawmill byproduct from Thailand's regulated teak plantations, reclaimed and extracted through solvent-free ethanol maceration — a true upcycling story from waste to warm, dusty wood absolute.",
+      notes: 'Dusty · Woody · Green olive',
+    },
+  ];
+
+  /* -------------------------------------------------------
+     3) ARTICLES DE BLOG — récupération automatique
+     -----------------------------------------------------
+     Ces 3 cartes viennent normalement directement de Ghost via
+     la Content API : publie un article, tagge-le avec le tag
+     défini dans ARTICLES_TAG_SLUG, il apparaîtra ici tout seul
+     à la prochaine visite de la page. Rien à modifier ici.
+
+     CONFIGURATION REQUISE (une seule fois) :
+       1. Ghost admin > Settings > Integrations > "Add custom
+          integration" (ou réutilise-en une existante) > copie
+          la "Content API Key".
+       2. Renseigne GHOST_API_URL et GHOST_CONTENT_API_KEY
+          ci-dessous.
+       3. Crée un tag Ghost (ex: #homepage-feature — un tag
+          commençant par # est un tag interne, invisible pour
+          les lecteurs) et ajoute-le aux articles que tu veux
+          voir apparaître ici. Renseigne son slug dans
+          ARTICLES_TAG_SLUG (le tag "#homepage-feature" devient
+          "hash-homepage-feature" dans l'API).
+
+     Tant que ce n'est pas configuré (ou si l'API est injoignable),
+     la page affiche automatiquement les 3 articles de secours
+     définis dans ARTICLES_FALLBACK plus bas, pour ne jamais
+     casser la page.
+  ------------------------------------------------------- */
+  const GHOST_API_URL = ''; // ex: 'https://www.losiam.com'
+  const GHOST_CONTENT_API_KEY = ''; // ex: '1234567890abcdef1234567890'
+  const ARTICLES_TAG_SLUG = 'hash-homepage-feature';
+  const ARTICLES_LIMIT = 3;
+
+  const ARTICLES_FALLBACK = [
+    {
+      url: 'https://www.losiam.com/miang-fermented-tea-absolute-lanna-thailand-perfumery/',
+      badge: 'Selection Chiang Mai Design Week 2026',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/07/1782464275999.jpg',
+      alt: 'Miang fermented tea absolute',
+      tag: 'Material',
+      date: 'Jul 2026',
+      title: 'Miang: the scent Lanna kept in reserve',
+      excerpt: 'A centuries-old chewed tea from the Lanna hills, fermented into a rare animalic-tobacco absolute for perfumery.',
+    },
+    {
+      url: 'https://www.losiam.com/old-teak-sawdust-upcycled-absolute/',
+      badge: 'New',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/06/20260605_133856-4.jpg',
+      alt: 'Old Teak Sawdust absolute',
+      tag: 'Material',
+      date: 'Jun 2026',
+      title: 'Old teak sawdust: an upcycled Thai botanical absolute',
+      excerpt: 'A sawmill byproduct transformed into a warm, dusty wood absolute through solvent-free ethanol extraction.',
+    },
+    {
+      url: 'https://www.losiam.com/rare-saraphi-absolute-a-jewel-of-thai-heritage-from-chiang-mai-university-campus-trees-to-luxe-fragrance/',
+      badge: '',
+      img: 'https://www.losiam.com/content/images/size/w720/2026/03/20250306_083403-1.jpg',
+      alt: 'Saraphi',
+      tag: 'Material',
+      date: 'Mar 2026',
+      title: 'Saraphi absolute: a jewel of Thai heritage, from CMU campus trees to luxe fragrance',
+      excerpt: 'The story behind 96 mapped trees and a flower with no commercial farm.',
+    },
+  ];
+
+  /* -------------------------------------------------------
+     RENDU — pas besoin de toucher à ce qui suit pour publier
+     du nouveau contenu.
+  ------------------------------------------------------- */
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function renderMarquee(items) {
+    const track = document.getElementById('ls-marquee-track');
+    if (!track) return;
+    // dupliqué une fois pour permettre le défilement infini (voir @keyframes ls-scroll)
+    const doubled = items.concat(items);
+    track.innerHTML = doubled
+      .map(function (label) {
+        return '<span class="ls-marquee__item">' + escapeHtml(label) + '</span>';
+      })
+      .join('');
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('ls-products-grid');
+    if (!grid) return;
+    grid.innerHTML = products
+      .map(function (p) {
+        return (
+          '<article class="ls-product">' +
+            '<div class="ls-product__visual">' +
+              (p.tag ? '<span class="ls-product__tag">' + escapeHtml(p.tag) + '</span>' : '') +
+              '<img src="' + escapeHtml(p.img) + '" alt="' + escapeHtml(p.alt || p.name) + '" loading="lazy">' +
+            '</div>' +
+            '<div class="ls-product__body">' +
+              '<div class="ls-product__category">' + escapeHtml(p.category) + '</div>' +
+              '<h3 class="ls-product__name">' + escapeHtml(p.name) + '</h3>' +
+              '<p class="ls-product__desc">' + escapeHtml(p.desc) + '</p>' +
+              '<div class="ls-product__notes">' + escapeHtml(p.notes) + '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      })
+      .join('');
+  }
+
+  function renderArticles(articles) {
+    const grid = document.getElementById('ls-blog-grid');
+    if (!grid) return;
+    grid.innerHTML = articles
+      .slice(0, ARTICLES_LIMIT)
+      .map(function (a) {
+        return (
+          '<a href="' + escapeHtml(a.url) + '" class="ls-article">' +
+            '<div class="ls-article__visual">' +
+              (a.badge ? '<span class="ls-article__badge">' + escapeHtml(a.badge) + '</span>' : '') +
+              '<img src="' + escapeHtml(a.img) + '" alt="' + escapeHtml(a.alt || a.title) + '" loading="lazy">' +
+            '</div>' +
+            '<div class="ls-article__meta"><span>' + escapeHtml(a.tag) + '</span><span>' + escapeHtml(a.date) + '</span></div>' +
+            '<h3 class="ls-article__title">' + escapeHtml(a.title) + '</h3>' +
+            '<p class="ls-article__excerpt">' + escapeHtml(a.excerpt) + '</p>' +
+          '</a>'
+        );
+      })
+      .join('');
+  }
+
+  function formatGhostDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function loadArticlesFromGhost() {
+    if (!GHOST_API_URL || !GHOST_CONTENT_API_KEY) {
+      renderArticles(ARTICLES_FALLBACK);
+      return;
+    }
+
+    const endpoint =
+      GHOST_API_URL.replace(/\/$/, '') +
+      '/ghost/api/content/posts/?key=' + encodeURIComponent(GHOST_CONTENT_API_KEY) +
+      '&limit=' + ARTICLES_LIMIT +
+      '&filter=' + encodeURIComponent('tag:' + ARTICLES_TAG_SLUG) +
+      '&fields=title,url,excerpt,feature_image,published_at' +
+      '&include=tags';
+
+    fetch(endpoint)
+      .then(function (res) {
+        if (!res.ok) throw new Error('Ghost Content API error: ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        const posts = data && data.posts ? data.posts : [];
+        if (!posts.length) {
+          renderArticles(ARTICLES_FALLBACK);
+          return;
+        }
+        renderArticles(
+          posts.map(function (post) {
+            return {
+              url: post.url,
+              badge: '',
+              img: post.feature_image || ARTICLES_FALLBACK[0].img,
+              alt: post.title,
+              tag: (post.tags && post.tags[0] && post.tags[0].name) || 'Journal',
+              date: formatGhostDate(post.published_at),
+              title: post.title,
+              excerpt: post.excerpt,
+            };
+          })
+        );
+      })
+      .catch(function (err) {
+        console.warn('[LOSIAM] Ghost Content API indisponible, affichage du contenu de secours.', err);
+        renderArticles(ARTICLES_FALLBACK);
+      });
+  }
+
+  renderMarquee(MARQUEE_ITEMS);
+  renderProducts(PRODUCTS);
+  loadArticlesFromGhost();
+})();
+</script>
