@@ -984,8 +984,14 @@
             })
             .then(function(response) {
               if (response.ok) {
-                status.textContent = "Thank you — your message has been sent. We'll reply within two business days.";
+                status.textContent = "Thank you. Your message has been sent. We'll reply within two business days.";
                 status.style.color = '#c9a97a';
+                if (typeof gtag === 'function') {
+                  gtag('event', 'generate_lead', {
+                    form_id: 'ls-contact-form',
+                    page_location: window.location.href
+                  });
+                }
                 form.reset();
               } else {
                 status.textContent = "Something went wrong. Please email us directly at info@losiam.com.";
