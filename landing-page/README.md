@@ -66,49 +66,45 @@ Sans cette configuration, la page affiche 3 articles de secours codés en dur (`
 
 La clé Content API est conçue pour être exposée côté client (lecture seule, contenu déjà public) — ce n'est pas un secret à protéger comme une clé Admin API.
 
-## Aller plus loin : migrer vers un vrai template de thème (`home.hbs`)
+## Étape 2 : migration vers un vrai template de thème (`page-landingpage.hbs`)
 
-La solution actuelle reste un unique bloc "HTML card" Ghost : pratique et rapide à mettre à jour, mais toujours un seul fichier monolithique édité à la main dans l'admin Ghost, sans preview ni diff propre.
+La solution ci-dessus reste un unique bloc "HTML card" Ghost : pratique et rapide à mettre à jour, mais toujours un fichier monolithique édité à la main dans l'admin Ghost, sans preview ni diff propre, et les produits/articles restent pilotés en JS plutôt que d'être du vrai contenu Ghost.
 
-La solution la plus pérenne est de migrer ce contenu dans le thème Ghost actif, sous forme de template `home.hbs`. L'avantage : les produits phares peuvent eux aussi devenir de simples **posts Ghost** (avec un tag dédié, ex. `#product`), et Ghost les injecte nativement — plus aucun tableau JS à maintenir, tout se fait depuis l'admin Ghost comme un article de blog classique.
+Le fichier **`theme/page-landingpage.hbs`** de ce dossier est la version pérenne : un vrai template de thème qui remplace la carte HTML. D'après le brief GA4 du 5 octobre 2026, le site tourne sur le thème officiel **Headline** (Ghost 6.x) — ce fichier a été construit et vérifié contre le code source public de ce thème ([TryGhost/Headline](https://github.com/TryGhost/Headline)), qui définit bien `home.hbs`/`page.hbs` et les helpers (`{{#get}}`, `{{img_url}}`, `{{date}}`, `{{#foreach}}`) utilisés ici.
 
-Exemple de structure (à adapter selon le thème actif) :
+**Pourquoi `page-landingpage.hbs` et pas `home.hbs`** : Ghost sert automatiquement ce fichier pour la page dont le slug est `landingpage` (convention de nommage `page-<slug>.hbs`), exactement la page déjà utilisée aujourd'hui comme accueil via `routes.yaml`. Aucune modification de `routes.yaml` n'est donc nécessaire — contrairement à un `home.hbs`, qui aurait demandé de changer le routage.
 
-```handlebars
-{{!< default}}
+**Ce que ce template remplace** : les produits phares et les 3 derniers articles ne sont plus des tableaux JS ni un fetch côté client — ce sont de vrais **posts Ghost**, injectés nativement avec `{{#get "posts"}}`. Publier un produit ou sélectionner un article pour la home se fait depuis l'éditeur Ghost normal. Le bandeau défilant (marquee) reste piloté par un petit tableau JS en bas du fichier, car ce n'est pas de l'éditorial.
 
-{{! ... hero, services, process, story, contact : contenu statique, identique au HTML actuel ... }}
+### Convention de tags à respecter
 
-<div class="ls-catalog__grid">
-  {{#get "posts" filter="tag:hash-product" limit="3" as |products|}}
-    {{#foreach products}}
-      <article class="ls-product">
-        <div class="ls-product__visual">
-          <img src="{{feature_image}}" alt="{{title}}">
-        </div>
-        <div class="ls-product__body">
-          <h3 class="ls-product__name">{{title}}</h3>
-          <p class="ls-product__desc">{{excerpt}}</p>
-        </div>
-      </article>
-    {{/foreach}}
-  {{/get}}
-</div>
+Le Handlebars de Ghost ne peut pas parser un texte comme `#badge:New` (ça demanderait un helper JS personnalisé que les thèmes Ghost ne permettent pas) : la lecture se fait donc **par position dans la liste des tags du post**, pas par préfixe de texte. Tague chaque post dans cet ordre exact :
 
-<div class="ls-blog__grid">
-  {{#get "posts" filter="tag:hash-homepage-feature" limit="3" as |articles|}}
-    {{#foreach articles}}
-      {{> "article-card"}}
-    {{/foreach}}
-  {{/get}}
-</div>
-```
+**Produits phares** (sélectionnés par le tag interne `#product`) :
+1. un tag public = catégorie (ex. `Fresh Flowers Absolute`) → affiché au-dessus du nom
+2. *(optionnel)* un tag public = badge/ruban (ex. `Ultra-rare`) → affiché sur la photo
+3. un tag public par note olfactive (ex. `Floral`, `Delicate`, `Songkran heritage`) → affichés en bas, séparés par " · "
+4. **en dernier**, le tag interne `#product` (slug Ghost : `hash-product`) — c'est lui qui sélectionne le post pour cette grille
 
-Étapes pour migrer :
-1. Récupérer le thème Ghost actif (Admin → Settings → Design → Edit theme code, ou en zip).
-2. Créer `home.hbs` à la racine du thème avec `{{!< default}}` en première ligne.
-3. Y transposer le CSS de `losiam-home.html` (dans `<style>` ou dans le fichier CSS du thème).
-4. Remplacer les sections "produits" et "articles" par les helpers `{{#get "posts"}}` ci-dessus.
-5. Re-uploader le thème, l'activer, puis vérifier que la page d'accueil (`routes.yaml` ou réglage "homepage") pointe bien vers ce template.
+Champs du post : titre = nom du produit, image de une = photo du produit, extrait (excerpt) = description courte.
 
-Cette migration demande un peu plus de rigueur (accès au thème, test en environnement de dev si possible) — c'est pour ça qu'on la fait dans un second temps, une fois que la v3 (ce dossier) aura prouvé son confort d'usage au quotidien.
+**Articles "From the laboratory journal"** (sélectionnés par le tag interne `#homepage-feature`) :
+1. un tag public = catégorie (ex. `Material`)
+2. *(optionnel)* un tag public = badge (ex. `New`, `Selection Chiang Mai Design Week 2026`)
+3. **en dernier**, le tag interne `#homepage-feature` (slug Ghost : `hash-homepage-feature`)
+
+Pourquoi "en dernier" : dans l'éditeur Ghost, un tag qu'on ajoute s'insère à la fin de la liste — il suffit donc d'ajouter le tag de sélection (`#product` / `#homepage-feature`) **après** avoir renseigné catégorie/badge/notes, et l'ordre est automatiquement correct.
+
+⚠️ Ceci change la convention des articles par rapport à l'étape 1 : le badge n'est plus un tag au format texte `#badge:...` mais le 2ᵉ tag public de la liste. Si tu actives ce template, re-tague les 3 articles déjà sélectionnés en conséquence.
+
+### Déployer ce template
+
+1. Ghost admin → **Settings → Design → Edit theme code → Download** (récupère le zip du thème actif).
+2. Ajoute `theme/page-landingpage.hbs` (ce fichier) à la racine du zip.
+3. Re-zippe, puis dans le même écran : **Upload → Save & activate**. Tu peux d'abord l'uploader sous un autre nom de thème pour le tester sans toucher au thème actif en production.
+4. Crée les 2 tags internes `#product` et `#homepage-feature` dans Ghost s'ils n'existent pas déjà, et tague au moins 3 produits + 3 articles **avant** d'activer — sinon les grilles s'afficheront vides (pas de contenu de secours sur cette version, puisque les produits sont maintenant du vrai contenu Ghost).
+5. Une fois actif, le contenu de la page Ghost "landingpage" (carte HTML) n'est plus utilisé : ce template n'appelle jamais `{{content}}`. Tu peux le laisser tel quel ou le vider.
+
+### Limite connue
+
+Ce fichier a été construit à partir du code source **public** du thème Headline, pas d'un export du thème réellement actif sur losiam.com — si ce thème a été personnalisé au-delà des réglages standards de Ghost (Settings → Design), il peut y avoir de petits conflits CSS à ajuster après l'upload. Teste d'abord sous un nom de thème différent pour vérifier le rendu avant d'activer en production.
