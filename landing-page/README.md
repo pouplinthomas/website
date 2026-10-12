@@ -108,3 +108,18 @@ Pourquoi "en dernier" : dans l'éditeur Ghost, un tag qu'on ajoute s'insère à 
 ### Limite connue
 
 Ce fichier a été construit à partir du code source **public** du thème Headline, pas d'un export du thème réellement actif sur losiam.com — si ce thème a été personnalisé au-delà des réglages standards de Ghost (Settings → Design), il peut y avoir de petits conflits CSS à ajuster après l'upload. Teste d'abord sous un nom de thème différent pour vérifier le rendu avant d'activer en production.
+
+## Correctif : deux balises H1 sur la homepage
+
+Constaté le 12 octobre 2026 : une fois `page-landingpage.hbs` actif, la page contient deux `<h1>` — le logo du header ("Le Laboratoire Olfactif du Siam - LOSIAM") et le vrai titre de la page ("Rare Thai botanicals, captured in premium natural absolutes"). Une seule balise H1 par page est la bonne pratique SEO ; le logo ne doit pas en être une.
+
+**Cause** : `default.hbs` (le header, partagé par toutes les pages du thème) wrappe le logo dans un `<h1>` uniquement sur la page d'accueil — un pattern standard dans les thèmes Ghost, mais qui entre en conflit avec le vrai H1 défini dans `page-landingpage.hbs`.
+
+**Fichier** : `theme/default.hbs` dans ce dossier — le `default.hbs` public du thème Headline avec un patch de 3 lignes (détaillé en commentaire en tête du fichier, retiré automatiquement par Ghost au rendu) : la classe `gh-head-logo` est appliquée directement au lien `<a>` au lieu d'être portée par un `<h1>` conditionnel. Aucun changement visuel attendu (le style ne dépendait pas de la balise elle-même).
+
+**Déploiement** : même procédure que pour `page-landingpage.hbs` — ajouter ce fichier à la racine du zip du thème (il remplace le `default.hbs` existant), re-zipper, uploader, tester, puis activer. ⚠️ Si ton `default.hbs` actuel a été personnalisé au-delà du logo (nav, footer, etc.), ne le remplace pas en bloc : applique seulement les 3 lignes indiquées dans le commentaire du fichier à TON fichier réel.
+
+**Vérification après déploiement** :
+1. Affiche le code source de `https://www.losiam.com/` et confirme qu'il n'y a plus qu'un seul `<h1>`, celui du hero ("Rare Thai botanicals...").
+2. Vérifie la balise `modified_time` pour confirmer que le cache Fastly sert bien la nouvelle version avant de déclarer le correctif effectif.
+3. Vérifie que le logo du header a toujours le même rendu visuel qu'avant sur toutes les pages (pas seulement l'accueil).
