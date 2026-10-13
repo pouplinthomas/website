@@ -1,9 +1,8 @@
 {{!--
   ATTENTION avant de remplacer ton default.hbs par celui-ci :
-  Ce fichier est le default.hbs PUBLIC du thème Headline (identique à
-  celui déjà utilisé avec succès pour page-landingpage.hbs), avec UNE
-  SEULE modification : le logo du header n'est plus wrappé dans un
-  <h1> sur la page d'accueil (voir lignes 19-27 ci-dessous).
+  Ce fichier est TON default.hbs réel (fourni le 13 octobre 2026),
+  avec UNE SEULE modification : le logo du header n'est plus wrappé
+  dans un <h1> sur la page d'accueil (voir lignes 19-26 ci-dessous).
 
   POURQUOI : la homepage avait deux balises <h1> — le logo ("Le
   Laboratoire Olfactif du Siam - LOSIAM", hérité de ce default.hbs)
@@ -12,7 +11,9 @@
   balise H1 par page est la bonne pratique SEO — le logo n'est pas
   le titre de la page.
 
-  CE QUI A CHANGÉ (3 lignes) :
+  CE QUI A CHANGÉ (3 lignes, tout le reste est identique à ton
+  fichier d'origine — y compris les attributs width/height sur le
+  logo, l'absence de helpers {{t}}, etc.) :
     AVANT :
       {{#is "home"}}<h1 class="gh-head-logo">{{/is}}
       <a {{^is "home"}}class="gh-head-logo"{{/is}} href="{{@site.url}}">
@@ -29,11 +30,6 @@
     changement visuel attendu : le style ne dépendait déjà pas de la
     balise <h1> elle-même (il devait déjà être identique entre
     l'accueil et les autres pages, où le logo n'a jamais été un h1).
-
-  SI TON default.hbs ACTUEL A ÉTÉ PERSONNALISÉ au-delà des réglages
-  standards de Ghost (Settings → Design) — nav modifiée à la main,
-  footer différent, etc. — ne remplace pas ton fichier en bloc :
-  applique seulement le patch de 3 lignes ci-dessus dans TON fichier.
 --}}
 <!DOCTYPE html>
 <html lang="{{@site.locale}}">
@@ -41,7 +37,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{meta_title page=(t " (Page %)")}}</title>
+    <title>{{meta_title}}</title>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
 
     {{ghost_head}}
@@ -56,7 +52,7 @@
                 <div class="gh-head-brand-wrapper">
                     <a class="gh-head-logo" href="{{@site.url}}">
                         {{#if @site.logo}}
-                            <img src="{{@site.logo}}" alt="{{@site.title}}">
+                            <img src="{{@site.logo}}" alt="{{@site.title}}" width="756" height="302">
                             {{#if @custom.white_publication_logo_for_transparent_header}}
                                 <img src="{{@custom.white_publication_logo_for_transparent_header}}" alt="{{@site.title}}">
                             {{/if}}
@@ -65,15 +61,15 @@
                         {{/if}}
                     </a>
                 </div>
-                <button class="gh-search gh-icon-btn" aria-label="{{t "Search this site"}}" data-ghost-search>{{> "icons/search"}}</button>
-                <button class="gh-burger" aria-label="{{t "Toggle menu"}}"></button>
+                <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
+                <button class="gh-burger"></button>
             </div>
 
             <nav class="gh-head-menu">
                 {{navigation}}
                 {{#unless @site.members_enabled}}
                     {{#match @custom.navigation_layout "Stacked"}}
-                        <button class="gh-search gh-icon-btn" aria-label="{{t "Search this site"}}" data-ghost-search>{{> "icons/search"}}</button>
+                        <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
                     {{/match}}
                 {{/unless}}
             </nav>
@@ -81,20 +77,20 @@
             <div class="gh-head-actions">
                 {{#unless @site.members_enabled}}
                     {{^match @custom.navigation_layout "Stacked"}}
-                        <button class="gh-search gh-icon-btn" aria-label="{{t "Search this site"}}" data-ghost-search>{{> "icons/search"}}</button>
+                        <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
                     {{/match}}
                 {{else}}
-                    <button class="gh-search gh-icon-btn" aria-label="{{t "Search this site"}}" data-ghost-search>{{> "icons/search"}}</button>
+                    <button class="gh-search gh-icon-btn" aria-label="Search this site" data-ghost-search>{{> "icons/search"}}</button>
                     <div class="gh-head-members">
                         {{#unless @member}}
                             {{#unless @site.members_invite_only}}
-                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">{{t "Sign in"}}</a>
-                                <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/signup" data-portal="signup">{{t "Subscribe"}}</a>
+                                <a class="gh-head-link" href="#/portal/signin" data-portal="signin">Sign in</a>
+                                <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/signup" data-portal="signup">Subscribe</a>
                             {{else}}
-                                <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/signin" data-portal="signin">{{t "Sign in"}}</a>
+                                <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/signin" data-portal="signin">Sign in</a>
                             {{/unless}}
                         {{else}}
-                            <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/account" data-portal="account">{{t "Account"}}</a>
+                            <a class="gh-head-btn gh-btn gh-primary-btn" href="#/portal/account" data-portal="account">Account</a>
                         {{/unless}}
                     </div>
                 {{/unless}}
@@ -109,11 +105,11 @@
             {{#if @site.members_enabled}}
             {{#unless @member}}
                 <section class="gh-subscribe">
-                    <h3 class="gh-subscribe-title">{{t "Subscribe to {sitetitle}" sitetitle=@site.title}}</h3>
+                    <h3 class="gh-subscribe-title">Subscribe to {{@site.title}}</h3>
                     {{#if @custom.email_signup_text}}
                         <div class="gh-subscribe-description">{{@custom.email_signup_text}}</div>
                     {{/if}}
-                    <button class="gh-subscribe-btn gh-btn" data-portal="signup">{{> "icons/email"}} {{t "Subscribe now"}}</button>
+                    <button class="gh-subscribe-btn gh-btn" data-portal="signup">{{> "icons/email"}} Subscribe now</button>
                 </section>
             {{/unless}}
             {{/if}}
@@ -122,20 +118,9 @@
                 {{navigation type="secondary"}}
             </nav>
 
-            <div class="gh-social-links">
-                {{#social_accounts @site}}
-                    <a href="{{href}}" target="_blank" rel="noopener" aria-label="{{name}}">
-                        {{#> (concat "icons/" type)}}
-                            {{!-- Fallback when no per-platform icon partial exists --}}
-                            <span>{{name}}</span>
-                        {{/undefined}}
-                    </a>
-                {{/social_accounts}}
-            </div>
-
             <div class="gh-copyright">
                 {{#unless @custom.footer_text}}
-                    {{@site.title}} © {{date format="YYYY"}}. {{{t "Powered by {ghostlink}" ghostlink="<a href=\"https://ghost.org/\" target=\"_blank\" rel=\"noopener\">Ghost</a>"}}}
+                    {{@site.title}} © {{date format="YYYY"}}. Powered by <a href="https://ghost.org/" target="_blank" rel="noopener">Ghost</a>
                 {{else}}
                     {{@custom.footer_text}}
                 {{/unless}}

@@ -115,9 +115,9 @@ Constaté le 12 octobre 2026 : une fois `page-landingpage.hbs` actif, la page co
 
 **Cause** : `default.hbs` (le header, partagé par toutes les pages du thème) wrappe le logo dans un `<h1>` uniquement sur la page d'accueil — un pattern standard dans les thèmes Ghost, mais qui entre en conflit avec le vrai H1 défini dans `page-landingpage.hbs`.
 
-**Fichier** : `theme/default.hbs` dans ce dossier — le `default.hbs` public du thème Headline avec un patch de 3 lignes (détaillé en commentaire en tête du fichier, retiré automatiquement par Ghost au rendu) : la classe `gh-head-logo` est appliquée directement au lien `<a>` au lieu d'être portée par un `<h1>` conditionnel. Aucun changement visuel attendu (le style ne dépendait pas de la balise elle-même).
+**Fichier** : `theme/default.hbs` dans ce dossier — basé sur **ton fichier réel** (fourni le 13 octobre 2026, vérifié diff par diff), avec un patch de 3 lignes (détaillé en commentaire en tête du fichier, retiré automatiquement par Ghost au rendu) : la classe `gh-head-logo` est appliquée directement au lien `<a>` au lieu d'être portée par un `<h1>` conditionnel. Tout le reste (attributs `width`/`height` sur le logo, absence de helpers `{{t}}`, etc.) est identique à ton fichier d'origine. Aucun changement visuel attendu.
 
-**Déploiement** : même procédure que pour `page-landingpage.hbs` — ajouter ce fichier à la racine du zip du thème (il remplace le `default.hbs` existant), re-zipper, uploader, tester, puis activer. ⚠️ Si ton `default.hbs` actuel a été personnalisé au-delà du logo (nav, footer, etc.), ne le remplace pas en bloc : applique seulement les 3 lignes indiquées dans le commentaire du fichier à TON fichier réel.
+**Déploiement** : même procédure que pour `page-landingpage.hbs` — remplacer `default.hbs` à la racine du zip du thème par celui-ci, re-zipper, uploader, tester, puis activer.
 
 **Vérification après déploiement** :
 1. Affiche le code source de `https://www.losiam.com/` et confirme qu'il n'y a plus qu'un seul `<h1>`, celui du hero ("Rare Thai botanicals...").
