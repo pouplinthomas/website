@@ -39,6 +39,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{meta_title}}</title>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
+    <style>
+        /* Empêche toute barre de défilement horizontale parasite, sur mobile
+           comme sur desktop, quel qu'en soit la cause exacte sur une page donnée. */
+        html, body { overflow-x: clip; }
+        /* La ligne de copyright du footer ne doit jamais forcer une largeur de
+           page plus grande que l'écran (texte long, non coupable au milieu d'un mot). */
+        .gh-copyright { white-space: normal; overflow-wrap: break-word; }
+    </style>
 
     {{ghost_head}}
 </head>
