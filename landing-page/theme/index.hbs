@@ -1,5 +1,7 @@
 {{!< default}}
 
+{{#contentFor "title"}}{{#match pagination.pages ">" 1}}Latest (Page {{pagination.page}}) — {{@site.title}}{{else}}Latest — {{@site.title}}{{/match}}{{/contentFor}}
+
 <main class="gh-main gh-outer">
     <div class="gh-inner">
 
