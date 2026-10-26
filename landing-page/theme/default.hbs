@@ -46,6 +46,19 @@
         /* La ligne de copyright du footer ne doit jamais forcer une largeur de
            page plus grande que l'écran (texte long, non coupable au milieu d'un mot). */
         .gh-copyright { white-space: normal; overflow-wrap: break-word; }
+
+        /* Menu mobile plein écran : les liens (.nav a, 26px) héritent de
+           white-space:nowrap de la règle .nav de base, ce qui fait déborder
+           un libellé long ("Extraction service", "Journal / Insights") sur un
+           écran étroit au lieu de passer à la ligne. */
+        .is-head-open #gh-head .nav a { white-space: normal; }
+
+        /* La barre Sign in / Subscribe est collée en bas de l'écran
+           (position: sticky) PAR-DESSUS la liste de liens quand le menu
+           mobile est ouvert, et masque donc les derniers éléments (Contact,
+           FAQ). On réserve de la place en bas de la liste pour qu'elle ne
+           recouvre jamais de lien. */
+        .is-head-open #gh-head .nav { padding-bottom: 180px; }
     </style>
 
     {{ghost_head}}
