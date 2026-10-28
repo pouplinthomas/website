@@ -59,6 +59,14 @@
            FAQ). On réserve de la place en bas de la liste pour qu'elle ne
            recouvre jamais de lien. */
         .is-head-open #gh-head .nav { padding-bottom: 180px; }
+
+        /* Au tout premier tap sur le menu burger après un chargement de page
+           (avant que le JS du thème ait fini de s'initialiser), les liens
+           s'affichent à 25.6px au lieu de 16px habituel — un décalage de
+           timing dans le framework JS partagé de Ghost, qui se corrige tout
+           seul dès la 2e ouverture. On fige la taille à 16px dans tous les
+           cas pour ne plus dépendre de ce timing. */
+        .is-head-open #gh-head .nav a { font-size: 1.6rem; }
     </style>
 
     {{ghost_head}}
