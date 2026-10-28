@@ -66,9 +66,12 @@
 {{!< default}}
 
 <style>
-    /* Le thème Ghost définit body { font-size: 62.5% } ce qui réduit la base rem à 10px.
-       On remet 16px pour que tous les rem du contenu LOSIAM soient corrects. */
-    html { font-size: 16px !important; }
+    /* Le thème Ghost définit body { font-size: 62.5% } (1rem = 10px), pensé pour
+       ses propres composants (menu, header...). Tout le CSS ci-dessous est en
+       pixels fixes (pas en rem) pour ne jamais dépendre de ce réglage global —
+       un ancien `html { font-size: 16px !important }` ici cassait la taille du
+       menu mobile du thème sur cette page, puisqu'une balise <style> s'applique
+       à toute la page et pas seulement à .losiam-home. */
 
     /* Supprime la marge/espace par défaut du thème au-dessus du contenu de page
        (prévu à l'origine pour laisser la place à un titre d'article) — sans ça,
@@ -152,7 +155,7 @@
 
   .losiam-home .ls-eyebrow {
     font-family: var(--ls-body);
-    font-size: 0.72rem;
+    font-size: 11.52px;
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
@@ -162,17 +165,17 @@
   .losiam-home .ls-container {
     max-width: 1240px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 32px;
   }
 
   /* ---------- SHARED BUTTONS ---------- */
   .ls-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.95rem 1.8rem;
+    gap: 9.6px;
+    padding: 15.2px 28.8px;
     font-family: var(--ls-body);
-    font-size: 0.85rem;
+    font-size: 13.6px;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -197,23 +200,23 @@
   .ls-marquee {
     background: var(--ls-ink);
     color: var(--ls-cream);
-    padding: 1.5rem 0;
+    padding: 24px 0;
     overflow: hidden;
     border-top: 1px solid rgba(245,240,230,0.1);
     border-bottom: 1px solid rgba(245,240,230,0.1);
   }
   .ls-marquee__track {
     display: flex;
-    gap: 3rem;
+    gap: 48px;
     animation: ls-scroll 45s linear infinite;
     white-space: nowrap;
     font-family: var(--ls-display);
-    font-size: 1.6rem;
+    font-size: 25.6px;
     font-style: italic;
     font-weight: 300;
     width: max-content;
   }
-  .ls-marquee__item { display: inline-flex; align-items: center; gap: 3rem; }
+  .ls-marquee__item { display: inline-flex; align-items: center; gap: 48px; }
   .ls-marquee__item::after {
     content: '❋';
     color: var(--ls-amber);
@@ -225,18 +228,18 @@
   }
 
   /* ---------- COMMON SECTION ---------- */
-  .ls-section { padding: 7rem 0; position: relative; }
+  .ls-section { padding: 112px 0; position: relative; }
   .ls-section__head {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    gap: 4rem;
+    gap: 64px;
     align-items: end;
-    margin-bottom: 4rem;
+    margin-bottom: 64px;
   }
-  .ls-section__title { font-size: clamp(2rem, 4vw, 3.5rem); }
+  .ls-section__title { font-size: clamp(32px, 4vw, 56px); }
   .ls-section__title em { font-style: italic; color: var(--ls-leaf); }
   .ls-section__intro {
-    font-size: 1.05rem;
+    font-size: 16.8px;
     color: var(--ls-ink);
     opacity: 0.75;
     max-width: 58ch;
@@ -251,7 +254,7 @@
     border-top: 1px solid rgba(31,42,36,0.15);
   }
   .ls-service {
-    padding: 3rem 2rem;
+    padding: 48px 32px;
     border-right: 1px solid rgba(31,42,36,0.15);
     border-bottom: 1px solid rgba(31,42,36,0.15);
     position: relative;
@@ -262,24 +265,24 @@
   .ls-service__num {
     font-family: var(--ls-display);
     font-style: italic;
-    font-size: 3rem;
+    font-size: 48px;
     color: var(--ls-amber);
     line-height: 1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
   }
   .ls-service h3 {
-    font-size: 1.6rem;
-    margin-bottom: 0.75rem;
+    font-size: 25.6px;
+    margin-bottom: 12px;
     color: var(--ls-ink);
   }
   .ls-service p {
-    font-size: 0.95rem;
+    font-size: 15.2px;
     color: var(--ls-ink);
     opacity: 0.75;
-    margin: 0 0 1.5rem;
+    margin: 0 0 24px;
   }
   .ls-service__link {
-    font-size: 0.75rem;
+    font-size: 12px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ls-leaf);
@@ -294,7 +297,7 @@
   .ls-catalog__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: 32px;
   }
   .ls-product {
     background: var(--ls-cream);
@@ -326,38 +329,38 @@
   .ls-product:hover .ls-product__visual img { transform: scale(1.04); }
   .ls-product__tag {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 0.65rem;
+    top: 16px;
+    right: 16px;
+    font-size: 10.4px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     background: var(--ls-ink);
     color: var(--ls-cream);
-    padding: 0.4rem 0.7rem;
+    padding: 6.4px 11.2px;
     border-radius: 2px;
     font-weight: 500;
   }
-  .ls-product__body { padding: 1.5rem 1.75rem 2rem; }
+  .ls-product__body { padding: 24px 28px 32px; }
   .ls-product__category {
     font-family: var(--ls-body);
-    font-size: 0.7rem;
+    font-size: 11.2px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--ls-moss);
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
   }
   .ls-product__name {
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
+    font-size: 22.4px;
+    margin-bottom: 8px;
   }
   .ls-product__desc {
-    font-size: 0.9rem;
+    font-size: 14.4px;
     color: var(--ls-ink);
     opacity: 0.7;
-    margin: 0 0 1rem;
+    margin: 0 0 16px;
   }
   .ls-product__notes {
-    font-size: 0.75rem;
+    font-size: 12px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ls-amber);
@@ -366,7 +369,7 @@
   }
   .ls-catalog__cta {
     text-align: center;
-    margin-top: 3.5rem;
+    margin-top: 56px;
   }
 
   /* ---------- EXTRACTION PROCESS ---------- */
@@ -374,22 +377,22 @@
   .ls-process__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
-    margin-top: 3rem;
+    gap: 48px;
+    margin-top: 48px;
   }
   .ls-process__item { text-align: left; }
   .ls-process__icon {
     width: 56px;
     height: 56px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
     color: var(--ls-leaf);
   }
   .ls-process__item h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    font-size: 24px;
+    margin-bottom: 12px;
   }
   .ls-process__item p {
-    font-size: 0.95rem;
+    font-size: 15.2px;
     color: var(--ls-ink);
     opacity: 0.75;
     margin: 0;
@@ -413,38 +416,38 @@
   .ls-story__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5rem;
+    gap: 80px;
     align-items: center;
     position: relative;
   }
   .ls-story h2 {
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    margin-bottom: 2rem;
+    font-size: clamp(32px, 4vw, 56px);
+    margin-bottom: 32px;
   }
   .ls-story h2 em { color: var(--ls-amber); font-style: italic; }
   .ls-story p {
-    font-size: 1.05rem;
+    font-size: 16.8px;
     opacity: 0.85;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
   }
   .ls-story__stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
+    gap: 24px;
+    margin-top: 48px;
+    padding-top: 32px;
     border-top: 1px solid rgba(245,240,230,0.2);
   }
   .ls-story__stat-num {
     font-family: var(--ls-display);
     font-style: italic;
-    font-size: 2.5rem;
+    font-size: 40px;
     color: var(--ls-amber);
     line-height: 1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
   }
   .ls-story__stat-label {
-    font-size: 0.72rem;
+    font-size: 11.52px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     opacity: 0.7;
@@ -461,7 +464,7 @@
   .ls-blog__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
+    gap: 40px;
   }
   .ls-article,
   .ls-article:link,
@@ -500,7 +503,7 @@
   .ls-article__visual {
     aspect-ratio: 3/2;
     background: var(--ls-sand);
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
     overflow: hidden;
     position: relative;
     border-radius: 2px;
@@ -515,35 +518,35 @@
   .ls-article:hover .ls-article__visual img { transform: scale(1.04); }
   .ls-article__badge {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 16px;
+    right: 16px;
     z-index: 2;
-    font-size: 0.65rem;
+    font-size: 10.4px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     background: var(--ls-ink);
     color: var(--ls-cream);
-    padding: 0.4rem 0.7rem;
+    padding: 6.4px 11.2px;
     border-radius: 2px;
     font-weight: 500;
   }
   .ls-article__meta {
     display: flex;
-    gap: 1rem;
-    font-size: 0.72rem;
+    gap: 16px;
+    font-size: 11.52px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--ls-moss);
-    margin-bottom: 0.75rem;
+    margin-bottom: 12px;
   }
   .ls-article__title {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-size: 20.8px;
+    margin-bottom: 8px;
     transition: color 0.3s ease;
     line-height: 1.25;
   }
   .ls-article__excerpt {
-    font-size: 0.95rem;
+    font-size: 15.2px;
     opacity: 0.7;
     margin: 0;
   }
@@ -554,7 +557,7 @@
       linear-gradient(rgba(61,90,69,0.92), rgba(31,42,36,0.96)),
       radial-gradient(circle at 30% 40%, var(--ls-moss), var(--ls-leaf));
     color: var(--ls-cream);
-    padding: 8rem 0;
+    padding: 128px 0;
     position: relative;
   }
   .ls-contact__inner {
@@ -563,14 +566,14 @@
     text-align: center;
   }
   .ls-contact h2 {
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    margin-bottom: 1.5rem;
+    font-size: clamp(35.2px, 5vw, 64px);
+    margin-bottom: 24px;
   }
   .ls-contact h2 em { color: var(--ls-amber); font-style: italic; }
   .ls-contact p {
-    font-size: 1.1rem;
+    font-size: 17.6px;
     opacity: 0.85;
-    margin-bottom: 3rem;
+    margin-bottom: 48px;
     max-width: 58ch;
     margin-left: auto;
     margin-right: auto;
@@ -579,28 +582,28 @@
   .ls-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 16px;
+    margin-bottom: 16px;
     text-align: left;
   }
   .ls-form__field { display: flex; flex-direction: column; }
   .ls-form__field--full { grid-column: 1 / -1; }
   .ls-form__label {
-    font-size: 0.7rem;
+    font-size: 11.2px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
     opacity: 0.8;
   }
   .ls-form__input,
   .ls-form__textarea,
   .ls-form__select {
-    padding: 0.9rem 1rem;
+    padding: 14.4px 16px;
     background: rgba(245,240,230,0.08);
     border: 1px solid rgba(245,240,230,0.25);
     color: var(--ls-cream);
     font-family: var(--ls-body);
-    font-size: 0.95rem;
+    font-size: 15.2px;
     border-radius: 2px;
     transition: border-color 0.3s ease, background 0.3s ease;
   }
@@ -615,7 +618,7 @@
   .ls-form__select option { background: var(--ls-ink); color: var(--ls-cream); }
   .ls-form__submit {
     grid-column: 1 / -1;
-    margin-top: 1rem;
+    margin-top: 16px;
     background: var(--ls-amber);
     color: var(--ls-ink);
   }
@@ -623,17 +626,17 @@
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 900px) {
-    .ls-section__head { grid-template-columns: 1fr; gap: 1.5rem; }
+    .ls-section__head { grid-template-columns: 1fr; gap: 24px; }
     .ls-services__grid,
     .ls-catalog__grid,
     .ls-process__grid,
     .ls-blog__grid { grid-template-columns: 1fr; }
     .ls-service { border-right: none; }
-    .ls-story__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .ls-story__grid { grid-template-columns: 1fr; gap: 40px; }
     .ls-story__stats { grid-template-columns: 1fr 1fr; }
     .ls-form { grid-template-columns: 1fr; }
-    .ls-section { padding: 4.5rem 0; }
-    .ls-container { padding: 0 1.25rem; }
+    .ls-section { padding: 72px 0; }
+    .ls-container { padding: 0 20px; }
   }
 </style>
 
@@ -763,10 +766,10 @@
         </div>
       </div>
 
-      <div style="text-align:center; margin-top:3rem; padding-top:3rem; border-top:1px solid rgba(31,42,36,0.15);">
+      <div style="text-align:center; margin-top:48px; padding-top:48px; border-top:1px solid rgba(31,42,36,0.15);">
         <span class="ls-eyebrow">New</span>
-        <h3 style="font-family:var(--ls-display); font-weight:400; font-size:clamp(1.8rem, 3vw, 2.4rem); color:var(--ls-ink); margin:0.5rem 0 1rem;">Discovery Kits</h3>
-        <p style="font-size:1.05rem; color:var(--ls-ink); opacity:0.85; max-width:50ch; margin:0 auto 1.25rem;">
+        <h3 style="font-family:var(--ls-display); font-weight:400; font-size:clamp(28.8px, 3vw, 38.4px); color:var(--ls-ink); margin:8px 0 16px;">Discovery Kits</h3>
+        <p style="font-size:16.8px; color:var(--ls-ink); opacity:0.85; max-width:50ch; margin:0 auto 20px;">
           Five 2 g absolutes per kit (Lanna, Jungle, Thai Gourmand), now available.
         </p>
         <a href="https://www.losiam.com/discovery-kits-meet-the-palette/" class="ls-service__link">See the kits →</a>
@@ -871,7 +874,7 @@
       <div class="ls-story__grid">
         <div class="ls-story__text">
           <span class="ls-eyebrow" style="color: var(--ls-amber);">Who we are</span>
-          <h2 style="margin-top: 1rem; color: #fffffe !important;">A French laboratory<br><em>rooted in Chiang Mai.</em></h2>
+          <h2 style="margin-top: 16px; color: #fffffe !important;">A French laboratory<br><em>rooted in Chiang Mai.</em></h2>
           <p>
             Founded in 2022 and based at the Chiang Mai University Science &amp; Technology Park,
             LOSiam bridges two decades of French expertise in natural extraction with exclusively the
@@ -955,7 +958,7 @@
     <div class="ls-container">
       <div class="ls-contact__inner">
         <span class="ls-eyebrow" style="color: var(--ls-amber);">Let's work together</span>
-        <h2 style="margin-top: 1rem; color: #fffffe !important;">Request samples<br><em>or start a project.</em></h2>
+        <h2 style="margin-top: 16px; color: #fffffe !important;">Request samples<br><em>or start a project.</em></h2>
         <p>
           Tell us what you're looking for — a specific absolute, a custom extraction,
           or an R&amp;D collaboration. Our team replies within two business days and dispatches
@@ -991,7 +994,7 @@
           <button type="submit" class="ls-btn ls-form__submit" id="ls-form-submit-btn">
             Send request <span class="ls-btn__arrow">→</span>
           </button>
-          <p id="ls-form-status" style="grid-column: 1 / -1; margin-top: 1rem; font-size: 0.9rem;"></p>
+          <p id="ls-form-status" style="grid-column: 1 / -1; margin-top: 16px; font-size: 14.4px;"></p>
         </form>
 
         <script>
